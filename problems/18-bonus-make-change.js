@@ -44,6 +44,7 @@ new method:
 - Add the single coin to the change returned by the recursive call. This will be
   a possible solution, but maybe not the best one.
 - Keep track of the best solution and return it at the end.
+// best solution refers to the solution with the shortest array
 
 N.B. Don't generate every possible permutation of coins and then compare them.
 Remember that a permutation is not the same thing as a combination - we will
@@ -57,6 +58,43 @@ combinations.
 
 function makeBetterChange(target, coins = [25, 10, 5, 1]) {
   // Your code here 
+  // edge case:
+  // 1. target < 0 => returns null
+  // 2. target < 3 => returns null
+  // 3. ultimately, if target < min(coins) => returns null
+  // 4. no combination adds up to target value => returns null
+
+
+  // initial target 74
+  // step 1: - coins[0] => new target is 49
+  // step 2: with target = 49, - coins[0] => new target is 24
+  // step 3: with target = 24, - coins[0] => new target is -1
+  // notes
+  // 1. base case (target === 0) 
+  // 2. recursive step (where to recurse) 
+  // 3. if "largest coin" is best coin, then add it to the result array, and call the function recursively again 
+  // 4. check your results and ensure that it is the best output for the given problem
+  // 5. does decreasing/ascending order matter? Why/Why not?
+  // 6. there needs to be another wrapper to ensure all the potential combinations are stored
+  // essence is to understand how recursion works
+  // potential practice for recursion: free code camp
+
+  let res = [];
+
+  for (let i = 0; i < coins.length; i++) {
+    if (target >= coins[i]) {
+      target -= coins[i];
+      res.push(coins[i]);
+      if (target === 0) {
+        return res;
+      } 
+      // else if (target < 1) return null ;
+      else return makeBetterChange(target, coins.slice(i));
+    }
+
+  return null;
+
+
 }
 
 

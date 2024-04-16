@@ -33,11 +33,37 @@ let y = x.slice();
 console.log(x[0] === y[0]) // true
 ***********************************************************************/
 
-
+// why does this code work?
 function deepDup(arr) {
   // Your code here 
+  // option 1: using array.map
+//   let res = arr.map(el => {
+//     if (Array.isArray(el)) return deepDup(el);
+//     return el * 1;
+// })
+
+//   return res;
+
+////////////////////////////////
+  // option 2: using traditional for loop: essentialy it's doing the same thing as the array.map, just writes out more clearly
+  let res = [];
+
+  for (let el of arr) {
+    if (Array.isArray(el)) res.push(deepDup(el));
+    else res.push(el * 1);
+  }
+  
+  return res;
+
 }
 
+debugger
+let arr = [[1], [2, [3]]];
+duped = deepDup(arr); 
+console.log(duped);
+console.log(arr[0]===duped[0]);
+console.log(arr[1]===duped[1]);
+console.log(arr[1][1] === duped[1][1])
 
 /**************DO NOT MODIFY ANYTHING UNDER THIS LINE*****************/
 try {
