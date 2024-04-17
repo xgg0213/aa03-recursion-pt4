@@ -79,20 +79,74 @@ function makeBetterChange(target, coins = [25, 10, 5, 1]) {
   // essence is to understand how recursion works
   // potential practice for recursion: free code camp
 
-  let res = [];
+  // let res = [];
+
+  // for (let i = 0; i < coins.length; i++) {
+  //   if (target >= coins[i]) {
+  //     target -= coins[i];
+  //     res.push(coins[i]);
+  //     if (target === 0) {
+  //       return res;
+  //     } 
+  //     // else if (target < 1) return null ;
+  //     else return makeBetterChange(target, coins.slice(i));
+  //   }
+
+  // return null;
+  ///////////////////////////////////////////////////////////////////////////
+
+  // correct solution from Jesse
+  //!!START
+  // Don't need any coins to make 0 cents change
+  if (target === 0) return [];
+
+  // Can't make change if all the coins are too big. This is in case
+  // the coins are so weird that there isn't a 1 cent piece.
+  if (!coins.some(coin => coin <= target)) return null;
+
+  // Optimization: make sure coins are always sorted descending in
+  // size. We'll see why later.
+  coins = coins.sort().reverse()
+
+  let bestChange = null;
 
   for (let i = 0; i < coins.length; i++) {
-    if (target >= coins[i]) {
-      target -= coins[i];
-      res.push(coins[i]);
-      if (target === 0) {
-        return res;
-      } 
-      // else if (target < 1) return null ;
-      else return makeBetterChange(target, coins.slice(i));
-    }
+    const coin = coins[i];
 
-  return null;
+    // can't use this coin, it's too big
+    if (coin > target) continue;
+
+    // use this coin
+    const remainder = target - coin;
+
+    // Find the best way to make change with the remainder (recursive
+    // call). Why `coins.slice(i)`? This is an optimization. Because
+    // we want to avoid double counting; imagine two ways to make
+    // change for 6 cents:
+    //   (1) first use a nickel, then a penny
+    //   (2) first use a penny, then a nickel
+    // To avoid double counting, we should require that we use *larger
+    // coins first*. This is what `coins.slice(i)` enforces; if we
+    // use a smaller coin, we can never go back to using larger coins
+    // later.
+    const bestRemainder = makeBetterChange(remainder, coins.slice(i));
+
+    // We may not be able to make the remaining amount of change (e.g.,
+    // if coins doesn't have a 1 cent piece), in which case we shouldn't
+    // use this coin.
+    if (bestRemainder === null) continue;
+
+    // Otherwise, the best way to make the change **using this coin**,
+    // is the best way to make the remainder, plus this one coin.
+    const thisChange = [coin].concat(bestRemainder);
+
+    // Is this better than anything we've seen so far?
+    if (bestChange === null || thisChange.length < bestChange.length) {
+      bestChange = thisChange;
+    }
+  }
+  return bestChange;
+  //!!END
 
 
 }
